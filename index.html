@@ -2,8 +2,17 @@
 <style>html,body{margin:0;height:100%;background:#000;overflow:hidden}
 #bg{position:fixed;inset:0;background:center/cover no-repeat;transition:background-image .8s}
 #p{position:fixed;left:0;right:0;bottom:4vh;display:flex;justify-content:center;gap:3vw;flex-wrap:wrap}
-#p img,#p video{width:min(22vw,260px);aspect-ratio:1;object-fit:cover;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.6);border:2px solid rgba(255,255,255,.25)}#h{position:fixed;top:2vh;right:2vw;padding:8px 16px;border-radius:10px;background:rgba(0,0,0,.55);color:#fff;font:600 clamp(16px,2.2vw,28px) Georgia,serif}#h:empty{display:none}</style></head>
-<body><div id="bg"></div><div id="h"></div><div id="p"></div><script>
-let last="";async function up(){try{const r=await fetch("scene.json?t="+Date.now(),{cache:"no-store"});const t=await r.text();if(t===last)return;last=t;const s=JSON.parse(t);
-document.getElementById("bg").style.backgroundImage=`url("${s.decor}")`;document.getElementById("h").textContent=s.heure||"";document.getElementById("p").innerHTML=s.presents.map(x=>/\.mp4$/i.test(x)?`<video src="${x}" autoplay muted playsinline></video>`:`<img src="${x}">`).join("");}catch(e){}}
+#p img,#p video{width:min(22vw,260px);aspect-ratio:1;object-fit:cover;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.6);border:2px solid rgba(255,255,255,.25)}
+#h{position:fixed;top:2vh;right:2vw;padding:8px 16px;border-radius:10px;background:rgba(0,0,0,.55);color:#fff;font:600 clamp(16px,2.2vw,28px) Georgia,serif}#h:empty{display:none}
+#snd{position:fixed;top:2vh;left:2vw;width:44px;height:44px;border:0;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;font-size:20px;cursor:pointer}
+#cr{position:fixed;left:1vw;bottom:.6vh;color:rgba(255,255,255,.6);font:11px sans-serif;max-width:60vw}#cr:empty{display:none}</style></head>
+<body><div id="bg"></div><div id="h"></div><div id="p"></div><button id="snd" title="Son">🔇</button><div id="cr"></div><audio id="a" loop preload="auto"></audio><script>
+const A=document.getElementById("a"),B=document.getElementById("snd"),V=0.25;let on=false,cur="",last="";
+function fade(to,ms,cb){const f=A.volume,t0=performance.now();(function st(n){const k=Math.min(1,(n-t0)/ms);A.volume=f+(to-f)*k;k<1?requestAnimationFrame(st):cb&&cb();})(t0);}
+function setMusic(m){if(m===cur)return;cur=m;if(!on)return;const go=()=>{if(!m){A.pause();return;}A.src=m;A.volume=0;A.play().catch(()=>{});fade(V,2000);};A.src&&!A.paused?fade(0,2000,go):go();}
+B.onclick=()=>{on=!on;B.textContent=on?"🔊":"🔇";if(on){if(cur){if(!A.src.endsWith(cur))A.src=cur;A.volume=0;A.play().catch(()=>{});fade(V,2000);}}else fade(0,600,()=>A.pause());};
+async function up(){try{const r=await fetch("scene.json?t="+Date.now(),{cache:"no-store"});const t=await r.text();if(t===last)return;last=t;const s=JSON.parse(t);
+document.getElementById("bg").style.backgroundImage=`url("${s.decor}")`;document.getElementById("h").textContent=s.heure||"";
+document.getElementById("p").innerHTML=(s.presents||[]).map(x=>/\.mp4$/i.test(x)?`<video src="${x}" autoplay muted playsinline></video>`:`<img src="${x}">`).join("");
+document.getElementById("cr").textContent=s.musique_credit?"♪ "+s.musique_credit:"";setMusic(s.musique||"");}catch(e){}}
 up();setInterval(up,5000);</script></body></html>
