@@ -13,6 +13,6 @@ function setMusic(m){if(m===cur)return;cur=m;if(!on)return;const go=()=>{if(!m){
 B.onclick=()=>{on=!on;B.textContent=on?"🔊":"🔇";if(on){if(cur){if(!A.src.endsWith(cur))A.src=cur;A.volume=0;A.play().catch(()=>{});fade(V,2000);}}else fade(0,600,()=>A.pause());};
 async function up(){try{const r=await fetch("scene.json?t="+Date.now(),{cache:"no-store"});const t=await r.text();if(t===last)return;last=t;const s=JSON.parse(t);
 document.getElementById("bg").style.backgroundImage=`url("${s.decor}")`;document.getElementById("h").textContent=s.heure||"";
-document.getElementById("p").innerHTML=(s.presents||[]).map(x=>/\.mp4$/i.test(x)?`<video src="${x}" autoplay muted playsinline></video>`:`<img src="${x}">`).join("");
+document.getElementById("p").innerHTML=(s.presents||[]).map(x=>/\.mp4$/i.test(x)?`<video src="${x}" autoplay muted loop playsinline></video>`:`<img src="${x}">`).join("");
 document.getElementById("cr").textContent=s.musique_credit?"♪ "+s.musique_credit:"";setMusic(s.musique||"");}catch(e){}}
 up();setInterval(up,5000);</script></body></html>
