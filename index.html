@@ -2,8 +2,8 @@
 <style>html,body{margin:0;height:100%;background:#000;overflow:hidden}
 #bg{position:fixed;inset:0;background:center/cover no-repeat;transition:background-image .8s}
 #p{position:fixed;left:0;right:0;bottom:4vh;display:flex;justify-content:center;gap:3vw;flex-wrap:wrap}
-#p img{width:min(22vw,260px);aspect-ratio:1;object-fit:cover;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.6);border:2px solid rgba(255,255,255,.25)}#h{position:fixed;top:2vh;right:2vw;padding:8px 16px;border-radius:10px;background:rgba(0,0,0,.55);color:#fff;font:600 clamp(16px,2.2vw,28px) Georgia,serif}#h:empty{display:none}</style></head>
+#p img,#p video{width:min(22vw,260px);aspect-ratio:1;object-fit:cover;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.6);border:2px solid rgba(255,255,255,.25)}#h{position:fixed;top:2vh;right:2vw;padding:8px 16px;border-radius:10px;background:rgba(0,0,0,.55);color:#fff;font:600 clamp(16px,2.2vw,28px) Georgia,serif}#h:empty{display:none}</style></head>
 <body><div id="bg"></div><div id="h"></div><div id="p"></div><script>
 let last="";async function up(){try{const r=await fetch("scene.json?t="+Date.now(),{cache:"no-store"});const t=await r.text();if(t===last)return;last=t;const s=JSON.parse(t);
-document.getElementById("bg").style.backgroundImage=`url("${s.decor}")`;document.getElementById("h").textContent=s.heure||"";document.getElementById("p").innerHTML=s.presents.map(x=>`<img src="${x}">`).join("");}catch(e){}}
+document.getElementById("bg").style.backgroundImage=`url("${s.decor}")`;document.getElementById("h").textContent=s.heure||"";document.getElementById("p").innerHTML=s.presents.map(x=>/\.mp4$/i.test(x)?`<video src="${x}" autoplay muted playsinline></video>`:`<img src="${x}">`).join("");}catch(e){}}
 up();setInterval(up,5000);</script></body></html>
