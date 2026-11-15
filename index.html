@@ -5,14 +5,28 @@
 #p img,#p video{width:min(22vw,260px);aspect-ratio:1;object-fit:cover;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.6);border:2px solid rgba(255,255,255,.25)}
 #h{position:fixed;top:2vh;right:2vw;padding:8px 16px;border-radius:10px;background:rgba(0,0,0,.55);color:#fff;font:600 clamp(16px,2.2vw,28px) Georgia,serif}#h:empty{display:none}
 #snd{position:fixed;top:2vh;left:2vw;width:44px;height:44px;border:0;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;font-size:20px;cursor:pointer}
-#cr{position:fixed;left:1vw;bottom:.6vh;color:rgba(255,255,255,.6);font:11px sans-serif;max-width:60vw}#cr:empty{display:none}</style></head>
-<body><div id="bg"></div><div id="h"></div><div id="p"></div><button id="snd" title="Son">🔇</button><div id="cr"></div><audio id="a" loop preload="auto"></audio><script>
-const A=document.getElementById("a"),B=document.getElementById("snd"),V=0.25;let on=false,cur="",last="";
+#cr{position:fixed;left:1vw;bottom:.6vh;color:rgba(255,255,255,.6);font:11px sans-serif;max-width:60vw}#cr:empty{display:none}
+#j{position:fixed;top:calc(2vh + 52px);left:2vw;width:min(32vw,210px);display:flex;flex-direction:column;gap:7px;padding:8px 10px;border-radius:10px;background:rgba(0,0,0,.45)}
+#j:empty{display:none}
+.jg{display:flex;flex-direction:column;gap:3px}
+.jg b{font:500 11px/1.2 sans-serif;color:rgba(255,255,255,.78);display:flex;justify-content:space-between;align-items:baseline;text-transform:capitalize}
+.jg b em{font:400 10px sans-serif;color:rgba(255,255,255,.4);font-style:normal}
+.jg i{display:block;height:5px;background:rgba(255,255,255,.14);border-radius:3px;overflow:hidden}
+.jg i span{display:block;height:100%;width:0;border-radius:3px;transition:width .8s ease}
+</style></head>
+<body><div id="bg"></div><div id="h"></div><div id="p"></div><button id="snd" title="Son">🔇</button><div id="j"></div><div id="cr"></div><audio id="a" loop preload="auto"></audio><script>
+const A=document.getElementById("a"),B=document.getElementById("snd"),J=document.getElementById("j"),V=0.25;let on=false,cur="",last="";
+const JC={cour:"#c4a35a",peuple:"#6a9a8a",couronne:"#8b5a6a",tresor:"#c48a5a","trésor":"#c48a5a","tresor levant":"#c48a5a","trésor levant":"#c48a5a"};
 function fade(to,ms,cb){const f=A.volume,t0=performance.now();(function st(n){const k=Math.min(1,(n-t0)/ms);A.volume=f+(to-f)*k;k<1?requestAnimationFrame(st):cb&&cb();})(t0);}
 function setMusic(m){if(m===cur)return;cur=m;if(!on)return;const go=()=>{if(!m){A.pause();return;}A.src=m;A.volume=0;A.play().catch(()=>{});fade(V,2000);};A.src&&!A.paused?fade(0,2000,go):go();}
+function setJauges(arr){if(!arr||!arr.length){J.innerHTML="";return;}
+const names=arr.map(x=>String(x.nom||""));
+const have=[...J.querySelectorAll(".jg")].map(e=>e.dataset.nom);
+if(have.join("\0")!==names.join("\0")){J.innerHTML=arr.map(x=>{const n=String(x.nom||"");const c=JC[n.toLowerCase()]||"#9a9a9a";return `<div class="jg" data-nom="${n}"><b>${n} <em></em></b><i><span style="background:${c}"></span></i></div>`;}).join("");}
+requestAnimationFrame(()=>requestAnimationFrame(()=>{[...J.querySelectorAll(".jg")].forEach((e,i)=>{const v=Math.max(0,Math.min(100,Number(arr[i].valeur)||0));e.querySelector("span").style.width=v+"%";e.querySelector("em").textContent=v;});}));}
 B.onclick=()=>{on=!on;B.textContent=on?"🔊":"🔇";if(on){if(cur){if(!A.src.endsWith(cur))A.src=cur;A.volume=0;A.play().catch(()=>{});fade(V,2000);}}else fade(0,600,()=>A.pause());};
 async function up(){try{const r=await fetch("scene.json?t="+Date.now(),{cache:"no-store"});const t=await r.text();if(t===last)return;last=t;const s=JSON.parse(t);
 document.getElementById("bg").style.backgroundImage=`url("${s.decor}")`;document.getElementById("h").textContent=s.heure||"";
 document.getElementById("p").innerHTML=(s.presents||[]).map(x=>/\.mp4$/i.test(x)?`<video src="${x}" autoplay muted loop playsinline></video>`:`<img src="${x}">`).join("");
-document.getElementById("cr").textContent=s.musique_credit?"♪ "+s.musique_credit:"";setMusic(s.musique||"");}catch(e){}}
+document.getElementById("cr").textContent=s.musique_credit?"♪ "+s.musique_credit:"";setMusic(s.musique||"");setJauges(s.jauges);}catch(e){}}
 up();setInterval(up,5000);</script></body></html>
