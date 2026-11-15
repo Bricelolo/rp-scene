@@ -16,7 +16,7 @@
 </style></head>
 <body><div id="bg"></div><div id="h"></div><div id="p"></div><button id="snd" title="Son">🔇</button><div id="j"></div><div id="cr"></div><audio id="a" loop preload="auto"></audio><script>
 const A=document.getElementById("a"),B=document.getElementById("snd"),J=document.getElementById("j"),V=0.25;let on=false,cur="",last="";
-const JC={cour:"#c4a35a",peuple:"#6a9a8a",couronne:"#8b5a6a",tresor:"#c48a5a","trésor":"#c48a5a","tresor levant":"#c48a5a","trésor levant":"#c48a5a"};
+const JC={cour:"#c4a35a",peuple:"#6a9a8a",couronne:"#8b5a6a",tresor:"#c48a5a","trésor":"#c48a5a","tresor levant":"#c48a5a","trésor levant":"#c48a5a","budget palais":"#7a8aa8",budget_palais:"#7a8aa8"};
 function fade(to,ms,cb){const f=A.volume,t0=performance.now();(function st(n){const k=Math.min(1,(n-t0)/ms);A.volume=f+(to-f)*k;k<1?requestAnimationFrame(st):cb&&cb();})(t0);}
 function setMusic(m){if(m===cur)return;cur=m;if(!on)return;const go=()=>{if(!m){A.pause();return;}A.src=m;A.volume=0;A.play().catch(()=>{});fade(V,2000);};A.src&&!A.paused?fade(0,2000,go):go();}
 function setJauges(arr){if(!arr||!arr.length){J.innerHTML="";return;}
